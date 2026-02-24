@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Viator Travel Agents – Spin to Win!</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   DESIGN TOKENS
+   ============================================= */
+:root {
+  --purple:   #8d37ff;
+  --green:    #00c295;
+  --pink:     #ff2579;
+  --orange:   #f86148;
+  --cyan:     #00d6db;
+  --bg:       #1e1a34;
+  --viator:   #008768;
+  --white:    #ffffff;
+
+  --glass:         rgba(255,255,255,0.06);
+  --glass-border:  rgba(255,255,255,0.12);
+  --text-dim:      rgba(255,255,255,0.55);
+  --text-dimmer:   rgba(255,255,255,0.28);
+
+  --font: 'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =============================================
+   BACKGROUND
+   ============================================= */
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 50% at 8%  65%, rgba(141,55,255,0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 45% at 92% 18%, rgba(0,135,104,0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 50% at 50% 95%, rgba(0,214,219,0.09) 0%, transparent 60%),
+    var(--bg);
+}
+
+.particles { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.particle {
+  position: absolute; border-radius: 50%; opacity: 0;
+  animation: drift linear infinite;
+}
+@keyframes drift {
+  0%   { transform: translateY(105vh) translateX(0) scale(0.5); opacity: 0; }
+  5%   { opacity: 0.7; }
+  95%  { opacity: 0.5; }
+  100% { transform: translateY(-10vh) translateX(var(--dx,0px)) scale(1.3); opacity: 0; }
+}
+
+.float-icons { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.float-icon {
+  position: absolute; opacity: 0;
+  animation: iconFloat linear infinite;
+}
+@keyframes iconFloat {
+  0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+  8%   { opacity: 0.055; }
+  92%  { opacity: 0.055; }
+  100% { transform: translateY(-15vh) rotate(360deg); opacity: 0; }
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+header {
+  position: relative; z-index: 20;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(30,26,52,0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+.logo-mark {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--viator);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; font-weight: 900; color: var(--white);
+  box-shadow: 0 0 18px rgba(0,135,104,0.5);
+  flex-shrink: 0;
+}
+.logo-words { display: flex; flex-direction: column; line-height: 1.15; }
+.logo-words .brand { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.3px; }
+.logo-words .sub   { font-size: 0.62rem; font-weight: 700; color: var(--green); letter-spacing: 1.8px; text-transform: uppercase; }
+
+.event-pill {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 100px; padding: 6px 13px;
+  font-size: 0.68rem; font-weight: 700; color: var(--green);
+  letter-spacing: 1px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 7px;
+  flex-shrink: 0;
+}
+.event-pill .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 7px var(--green);
+  animation: blink 2s ease-in-out infinite; flex-shrink: 0;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
+/* =============================================
+   PAGE LAYOUT
+   ============================================= */
+.page {
+  position: relative; z-index: 5;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 28px 16px 56px; gap: 24px;
+}
+
+/* =============================================
+   HERO
+   ============================================= */
+.hero { text-align: center; max-width: 540px; width: 100%; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(0,135,104,0.14); border: 1px solid rgba(0,135,104,0.32);
+  border-radius: 100px; padding: 5px 14px;
+  font-size: 0.67rem; font-weight: 700; color: var(--green);
+  letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: clamp(1.75rem, 5.5vw, 3rem);
+  font-weight: 900; line-height: 1.08; letter-spacing: -0.5px; margin-bottom: 12px;
+}
+.hero h1 .accent { color: var(--green); }
+.hero p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+.hero p strong { color: var(--cyan); font-weight: 700; }
+
+/* =============================================
+   STATS ROW
+   ============================================= */
+.stats-row {
+  display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; width: 100%;
+}
+.stat-chip {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 14px; padding: 11px 18px;
+  text-align: center; flex: 1 1 110px; max-width: 155px;
+}
+.stat-val   { font-size: 1.35rem; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+.stat-val.p { color: var(--purple); }
+.stat-label { font-size: 0.6rem; font-weight: 700; color: var(--text-dimmer); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 3px; }
+
+/* =============================================
+   SETUP NOTICE
+   ============================================= */
+.setup-notice {
+  background: rgba(248,97,72,0.09); border: 1px solid rgba(248,97,72,0.28);
+  border-radius: 14px; padding: 15px 18px;
+  max-width: 640px; width: 100%;
+  font-size: 0.78rem; line-height: 1.65; color: rgba(255,255,255,0.68);
+}
+.setup-notice strong { color: var(--orange); font-weight: 700; display: block; margin-bottom: 5px; font-size: 0.85rem; }
+.setup-notice ol { padding-left: 16px; margin-top: 5px; }
+.setup-notice li { margin-bottom: 3px; }
+.setup-notice code { background: rgba(0,0,0,0.3); border-radius: 4px; padding: 1px 6px; font-size: 0.75rem; color: var(--cyan); font-family: monospace; }
+
+/* =============================================
+   GAME AREA
+   ============================================= */
+.game-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 24px; width: 100%; max-width: 880px;
+}
+@media (min-width: 680px) {
+  .game-wrap { flex-direction: row; align-items: flex-start; justify-content: center; }
+}
+
+/* =============================================
+   WHEEL COLUMN
+   ============================================= */
+.wheel-col {
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  flex-shrink: 0;
+}
+
+.wheel-wrap {
+  position: relative;
+  --wsize: min(300px, calc(100vw - 52px));
+  width: var(--wsize); height: var(--wsize);
+}
+@media (min-width: 680px) { .wheel-wrap { --wsize: 330px; } }
+
+.wheel-glow {
+  position: absolute; inset: -22px; border-radius: 50%; z-index: 0;
+  background: radial-gradient(circle, rgba(0,135,104,0.26) 0%, transparent 68%);
+  animation: glow 3s ease-in-out infinite;
+}
+@keyframes glow { 0%,100%{transform:scale(1);opacity:0.8;} 50%{transform:scale(1.1);opacity:1;} }
+
+.wheel-orbit {
+  position: absolute; inset: -9px; border-radius: 50%;
+  border: 2px solid rgba(0,135,104,0.22); z-index: 1;
+  animation: orbit 18s linear infinite;
+}
+.wheel-orbit::before, .wheel-orbit::after {
+  content:''; position:absolute; width:8px; height:8px; border-radius:50%;
+  background: var(--viator); box-shadow: 0 0 9px var(--viator);
+  top:-4px; left:calc(50% - 4px);
+}
+.wheel-orbit::after { top:auto; bottom:-4px; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+
+.wheel-pointer {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  width:0; height:0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 28px solid var(--white);
+  filter: drop-shadow(0 0 7px rgba(255,255,255,0.5));
+  z-index: 10;
+}
+
+canvas#wheelCanvas {
+  display: block; width: 100%; height: 100%;
+  border-radius: 50%; position: relative; z-index: 2;
+  box-shadow: 0 0 36px rgba(0,135,104,0.22), 0 18px 48px rgba(0,0,0,0.5);
+}
+
+/* Locked overlay */
+.wheel-lock {
+  position: absolute; inset: 0; z-index: 8; border-radius: 50%;
+  background: rgba(30,26,52,0.68);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  transition: opacity 0.35s, visibility 0.35s;
+}
+.wheel-lock.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.lock-icon { font-size: 1.9rem; }
+.lock-msg {
+  font-size: 0.68rem; font-weight: 700;
+  color: rgba(255,255,255,0.65); letter-spacing: 0.8px;
+  text-transform: uppercase; text-align: center; padding: 0 14px; line-height: 1.55;
+}
+
+.wheel-hub {
+  position: absolute; inset: 0; z-index: 9;
+  display: flex; align-items: center; justify-content: center; pointer-events: none;
+}
+.hub-circle {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--bg); border: 3px solid var(--viator);
+  box-shadow: 0 0 16px rgba(0,135,104,0.55);
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+
+.prize-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.pchip {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 100px; padding: 5px 11px;
+  font-size: 0.7rem; font-weight: 600; color: var(--text-dim);
+  display: flex; align-items: center; gap: 5px;
+}
+.pchip.sp { border-color: rgba(141,55,255,0.38); color: var(--purple); background: rgba(141,55,255,0.07); }
+
+/* =============================================
+   FORM CARD
+   ============================================= */
+.form-card {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 24px; padding: 30px 26px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  width: 100%; max-width: 400px;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.32);
+  flex-shrink: 0;
+}
+.form-card h2 { font-size: 1.28rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
+.form-sub { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 22px; line-height: 1.55; }
+
+.fields { display: flex; flex-direction: column; gap: 13px; margin-bottom: 18px; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label {
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--text-dimmer); letter-spacing: 1.2px; text-transform: uppercase;
+}
+.field input[type="text"],
+.field input[type="email"] {
+  background: rgba(255,255,255,0.065); border: 1.5px solid rgba(255,255,255,0.10);
+  border-radius: 10px; padding: 12px 15px;
+  color: var(--white); font-size: 0.9rem; font-family: var(--font); font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+.field input:focus {
+  border-color: var(--viator); background: rgba(0,135,104,0.09);
+  box-shadow: 0 0 0 3px rgba(0,135,104,0.14);
+}
+.field input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
+
+.check-row {
+  display: flex; align-items: flex-start; gap: 11px; cursor: pointer;
+  padding: 11px 13px;
+  background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 10px; transition: border-color 0.2s, background 0.2s;
+}
+.check-row:hover { border-color: rgba(0,135,104,0.28); background: rgba(0,135,104,0.06); }
+.check-row input[type="checkbox"] {
+  width: 17px; height: 17px; margin-top: 1px;
+  accent-color: var(--viator); cursor: pointer; flex-shrink: 0;
+}
+.check-row span { font-size: 0.81rem; color: var(--text-dim); line-height: 1.45; }
+.check-row strong { color: var(--green); font-weight: 700; }
+
+/* =============================================
+   SPIN BUTTON
+   ============================================= */
+.spin-btn {
+  width: 100%; padding: 14px 22px;
+  border: none; border-radius: 12px;
+  background: var(--viator);
+  color: var(--white); font-size: 0.97rem; font-weight: 800; font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 8px 26px rgba(0,135,104,0.42);
+  transition: transform 0.18s, box-shadow 0.18s;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  position: relative; overflow: hidden;
+}
+.spin-btn::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%);
+  opacity:0; transition: opacity 0.2s;
+}
+.spin-btn:hover::after { opacity: 1; }
+.spin-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(0,135,104,0.52); }
+.spin-btn:active { transform: translateY(0); }
+.spin-btn:disabled {
+  background: rgba(255,255,255,0.09); box-shadow: none;
+  cursor: not-allowed; transform: none; color: var(--text-dimmer);
+}
+.spin-btn:disabled::after { display: none; }
+.btn-icon { font-size: 1.05rem; }
+.spin-btn:not(:disabled) .btn-icon { animation: spinIco 3s linear infinite; }
+@keyframes spinIco { to { transform: rotate(360deg); } }
+
+.form-legal { margin-top: 12px; font-size: 0.65rem; color: var(--text-dimmer); text-align: center; line-height: 1.55; }
+
+/* =============================================
+   RESULT OVERLAY
+   ============================================= */
+.overlay {
+  display: none; position: fixed; inset: 0; z-index: 100;
+  background: rgba(30,26,52,0.88);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  align-items: center; justify-content: center;
+  padding: 16px; overflow-y: auto;
+}
+.overlay.show { display: flex; }
+
+.result-card {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 24px; padding: 38px 30px;
+  max-width: 460px; width: 100%; text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  position: relative; overflow: hidden;
+  animation: popIn 0.42s cubic-bezier(0.34,1.56,0.64,1) both;
+  margin: auto;
+}
+@keyframes popIn { from{transform:scale(0.6);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+.result-card.grand { border-color: rgba(141,55,255,0.42); background: rgba(141,55,255,0.07); }
+.result-card::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse at 50% -10%, rgba(0,135,104,0.18) 0%, transparent 55%);
+}
+.result-card.grand::before {
+  background: radial-gradient(ellipse at 50% -10%, rgba(141,55,255,0.22) 0%, transparent 55%);
+}
+
+.res-emoji { font-size: 3.2rem; margin-bottom: 14px; display: block; }
+.result-card h2 { font-size: 1.7rem; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 10px; }
+.result-card.grand h2 { color: var(--purple); }
+.result-card p { font-size: 0.87rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 22px; }
+
+.code-box {
+  background: rgba(0,135,104,0.1); border: 2px dashed rgba(0,135,104,0.42);
+  border-radius: 14px; padding: 18px 22px; margin-bottom: 14px;
+}
+.result-card.grand .code-box { background: rgba(141,55,255,0.1); border-color: rgba(141,55,255,0.42); }
+.code-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 8px; }
+.code-val { font-size: 1.55rem; font-weight: 800; letter-spacing: 3px; color: var(--green); word-break: break-all; }
+.result-card.grand .code-val { color: var(--purple); }
+.code-expiry { font-size: 0.68rem; color: var(--text-dimmer); margin-top: 7px; }
+
+.copy-btn {
+  background: none; border: 1.5px solid var(--glass-border);
+  border-radius: 100px; padding: 7px 18px;
+  color: var(--text-dim); font-size: 0.78rem; font-weight: 600; font-family: var(--font);
+  cursor: pointer; transition: all 0.2s; margin-bottom: 18px;
+}
+.copy-btn:hover { border-color: var(--green); color: var(--green); }
+
+.done-btn {
+  width: 100%; padding: 13px 22px;
+  background: var(--viator); border: none; border-radius: 12px;
+  color: var(--white); font-size: 0.92rem; font-weight: 800; font-family: var(--font);
+  cursor: pointer; box-shadow: 0 8px 22px rgba(0,135,104,0.38);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.done-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,135,104,0.48); }
+
+/* =============================================
+   CONFETTI
+   ============================================= */
+.cf {
+  position: fixed; pointer-events: none; z-index: 200;
+  animation: cfFall linear forwards; border-radius: 2px;
+}
+@keyframes cfFall {
+  0%  { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100%{ transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+/* =============================================
+   TOAST
+   ============================================= */
+.toast {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%) translateY(65px);
+  background: rgba(255,255,255,0.1); backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border); border-radius: 100px;
+  padding: 10px 20px; font-size: 0.8rem; font-weight: 600;
+  color: var(--white); z-index: 300;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* =============================================
+   MOBILE FINE-TUNE
+   ============================================= */
+@media (max-width: 679px) {
+  .page { padding: 18px 13px 44px; gap: 18px; }
+  header { padding: 11px 14px; }
+  .logo-words .brand { font-size: 0.88rem; }
+  .form-card { padding: 22px 18px; border-radius: 20px; }
+  .result-card { padding: 26px 18px; border-radius: 20px; }
+  .code-val { font-size: 1.2rem; letter-spacing: 2px; }
+  .result-card h2 { font-size: 1.45rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas"></div>
+<div class="particles" id="particles"></div>
+<div class="float-icons" id="floatIcons"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">V</div>
+    <div class="logo-words">
+      <span class="brand">Viator</span>
+      <span class="sub">Travel Agents</span>
+    </div>
+  </div>
+  <div class="event-pill"><span class="dot"></span><span id="eventLabel">Loading…</span></div>
+</header>
+
+<!-- PAGE -->
+<main class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🌍 Exclusive Agent Perks</div>
+    <h1><span class="accent">Spin to Win</span><br>Your Adventure Deal</h1>
+    <p>Fill in your details, spin the wheel &amp; unlock your exclusive promo code.<br>
+      <strong>$250 vouchers</strong> awarded every event — is today your day?</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-chip">
+      <div class="stat-val" id="statSpins">0</div>
+      <div class="stat-label">Spins Today</div>
+    </div>
+    <div class="stat-chip">
+      <div class="stat-val p" id="statGrand">– / 2</div>
+      <div class="stat-label">$250 Left</div>
+    </div>
+    <div class="stat-chip">
+      <div class="stat-val" id="statEvent" style="font-size:0.82rem;padding-top:5px;">–</div>
+      <div class="stat-label">Event</div>
+    </div>
+    <div class="stat-chip" id="statDateChip" style="display:none;">
+      <div class="stat-val" id="statDates" style="font-size:0.72rem;padding-top:4px;color:var(--cyan);">–</div>
+      <div class="stat-label">Event Dates</div>
+    </div>
+  </div>
+
+  <!-- SETUP NOTICE -->
+  <div class="setup-notice" id="setupNotice">
+    <strong>⚙️ Almost live — one step remaining, then set SHOW_SETUP_NOTICE = false</strong>
+    <ol>
+      <li>✅ <b>CSV connected</b> — your sheet is live at the published URL.</li>
+      <li>✅ <b>Sheet format matched</b> — reads columns: <code>Promocodes</code> · <code>Value</code> · <code>Event</code> · <code>Event Dates</code></li>
+      <li>✅ <b>Event filtering active</b> — QR codes use <code>?event=EventName</code> to load only that event's codes. Event name must match exactly what's in the <code>Event</code> column.</li>
+      <li>⬜ <b>Email capture:</b> Create a Google Apps Script Web App (code in HTML comments below), paste deployment URL into <code>APPS_SCRIPT_URL</code>.</li>
+    </ol>
+  </div>
+
+  <!-- GAME AREA -->
+  <div class="game-wrap">
+
+    <!-- WHEEL -->
+    <div class="wheel-col">
+      <div class="wheel-wrap">
+        <div class="wheel-glow"></div>
+        <div class="wheel-orbit"></div>
+        <div class="wheel-pointer"></div>
+        <canvas id="wheelCanvas"></canvas>
+        <div class="wheel-lock" id="wheelLock">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-msg">Fill in your details<br>to unlock the wheel</div>
+        </div>
+        <div class="wheel-hub"><div class="hub-circle">✈️</div></div>
+      </div>
+      <div class="prize-chips">
+        <div class="pchip">🎟️ 10% Off Promo</div>
+        <div class="pchip sp">⭐ $250 Voucher ×2</div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card">
+      <h2>Claim Your Spin ✨</h2>
+      <p class="form-sub">Enter your details to unlock the wheel and claim your exclusive deal.</p>
+      <div class="fields">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="fName" placeholder="Jane Smith" autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Agency Name</label>
+          <input type="text" id="fAgency" placeholder="Sunrise Travel Co." autocomplete="organization">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="fEmail" placeholder="jane@sunrisetravel.com" autocomplete="email">
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="fIsAgent">
+          <span>I'm already a <strong>Viator Travel Agent</strong> partner</span>
+        </label>
+      </div>
+      <button class="spin-btn" id="spinBtn" onclick="handleSpin()">
+        <span class="btn-icon">🌀</span> Spin the Wheel!
+      </button>
+      <p class="form-legal">One spin per person · Promo codes are event-specific and non-transferable</p>
+    </div>
+
+  </div><!-- /game-wrap -->
+</main>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-card" id="resultCard">
+    <span class="res-emoji" id="resEmoji">🎉</span>
+    <h2 id="resTitle">You won!</h2>
+    <p id="resMsg"></p>
+    <div class="code-box">
+      <div class="code-label">Your Promo Code</div>
+      <div class="code-val" id="resCode">——</div>
+      <div class="code-expiry" id="resExpiry"></div>
+    </div>
+    <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
+    <button class="done-btn" onclick="closeResult()">All Done — Happy Travels! ✈️</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* =================================================
+   CONFIG
+   ================================================= */
+const CFG = {
+  SHOW_SETUP_NOTICE: false,
+
+  // Published Google Sheet CSV — 4 columns: Promocodes | Value | Event | Event Dates
+  // Value is "10% off" or "$250 voucher". Event must match the ?event= URL param.
+  SHEET_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbPv3ydGZ5_jJ8hlG9kcFKp7X4JeeTnktmHKJzw5HHvP_OjQ9IOZkMNTmC_StOf0jXUho8dUheXrTs/pub?gid=0&single=true&output=csv',
+
+  // Google Apps Script Web App URL for email logging.
+  APPS_SCRIPT_URL: 'https://script.google.com/a/macros/tripadvisor.com/s/AKfycbwyMa4-o6yhYvaU6wb9iI1q7w4Ayn8J1ATiXYF25AqjwydsH8QY39lgfMkEQtf92Ind/exec',
+
+  GRAND_PRIZES_PER_EVENT: 2,
+};
+
+const SEGMENTS = [
+  { label: '10%\nOff!',     color: '#008768', type: '10pct'      },
+  { label: '10%\nOff!',     color: '#00c295', type: '10pct'      },
+  { label: '$250\nVoucher', color: '#8d37ff', type: 'grand_prize' },
+  { label: '10%\nOff!',     color: '#00d6db', type: '10pct'      },
+  { label: '10%\nOff!',     color: '#008768', type: '10pct'      },
+  { label: '10%\nOff!',     color: '#f86148', type: '10pct'      },
+  { label: '$250\nVoucher', color: '#8d37ff', type: 'grand_prize' },
+  { label: '10%\nOff!',     color: '#00c295', type: '10pct'      },
+];
+
+/* =================================================
+   STATE
+   ================================================= */
+let codes       = { '10pct': [], 'grand_prize': [] };
+let grandGiven  = 0;
+let spinCount   = 0;
+let spinning    = false;
+let wheelAngle  = 0;
+let currentCode = '';
+let eventId     = 'DEMO';
+let eventDates  = '';
+
+/* =================================================
+   INIT
+   ================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!CFG.SHOW_SETUP_NOTICE) {
+    const n = document.getElementById('setupNotice');
+    if (n) n.remove();
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  eventId = (params.get('event') || 'DEMO').toUpperCase().trim();
+  document.getElementById('eventLabel').textContent = '✈️ ' + eventId;
+  document.getElementById('statEvent').textContent  = eventId;
+
+  buildBg();
+  initWheel();
+  loadCodes();
+
+  ['fName','fAgency','fEmail'].forEach(id =>
+    document.getElementById(id).addEventListener('input', checkReady)
+  );
+  checkReady();
+});
+
+/* =================================================
+   BACKGROUND
+   ================================================= */
+function buildBg() {
+  const COLORS = ['#8d37ff','#00c295','#ff2579','#f86148','#00d6db','#008768'];
+  const ICONS  = ['✈️','🗺️','🌍','🏝️','🧳','🌴','🚢','🏔️','⛵','🎡','🌺','🍹','🦋','🎭'];
+
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    const s = 3 + Math.random() * 6;
+    Object.assign(el.style, {
+      width: s+'px', height: s+'px',
+      left: Math.random()*100+'%',
+      background: COLORS[i % COLORS.length],
+      animationDuration: (13+Math.random()*22)+'s',
+      animationDelay: (Math.random()*22)+'s',
+      '--dx': ((Math.random()-.5)*110)+'px',
+      opacity: 0,
+    });
+    pc.appendChild(el);
+  }
+
+  const fi = document.getElementById('floatIcons');
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('div');
+    el.className = 'float-icon';
+    el.textContent = ICONS[Math.floor(Math.random()*ICONS.length)];
+    Object.assign(el.style, {
+      left: Math.random()*100+'%',
+      fontSize: (1.1+Math.random()*1.3)+'rem',
+      animationDuration: (14+Math.random()*22)+'s',
+      animationDelay: (Math.random()*28)+'s',
+    });
+    fi.appendChild(el);
+  }
+}
+
+/* =================================================
+   WHEEL
+   ================================================= */
+function initWheel() {
+  const canvas = document.getElementById('wheelCanvas');
+  const dpr    = window.devicePixelRatio || 1;
+  function resize() {
+    const size = canvas.parentElement.offsetWidth || 300;
+    canvas.width  = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width  = size+'px';
+    canvas.style.height = size+'px';
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawWheel(wheelAngle);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+}
+
+function drawWheel(angle) {
+  const canvas = document.getElementById('wheelCanvas');
+  const dpr    = window.devicePixelRatio || 1;
+  const size   = parseInt(canvas.style.width) || (canvas.width / dpr);
+  const ctx    = canvas.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+
+  const cx  = size / 2, cy = size / 2, r = size / 2 - 3;
+  const arc = (2 * Math.PI) / SEGMENTS.length;
+
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2*Math.PI); ctx.clip();
+
+  SEGMENTS.forEach((seg, i) => {
+    const start = angle + i * arc - Math.PI/2;
+    const end   = start + arc;
+    const mid   = start + arc/2;
+
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+    ctx.fillStyle = seg.color; ctx.fill();
+
+    // Sheen
+    const g = ctx.createRadialGradient(cx,cy,r*.25,cx,cy,r);
+    g.addColorStop(0,'rgba(255,255,255,0.16)');
+    g.addColorStop(1,'rgba(0,0,0,0.10)');
+    ctx.fillStyle = g; ctx.fill();
+
+    // Divider
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Label
+    ctx.save();
+    ctx.translate(cx,cy); ctx.rotate(mid);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 5;
+    const fs    = Math.max(10, size * (seg.type==='grand_prize' ? 0.042 : 0.039));
+    ctx.font    = `800 ${fs}px Inter, sans-serif`;
+    const lines = seg.label.split('\n');
+    const lh    = fs * 1.28;
+    lines.forEach((line, li) => {
+      ctx.fillText(line, r - size*0.044, (li-(lines.length-1)/2)*lh + fs*0.36);
+    });
+    ctx.restore();
+  });
+
+  ctx.restore();
+
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI);
+  ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=3; ctx.stroke();
+}
+
+/* =================================================
+   LOAD CODES
+   Sheet: Promocodes | Value | Event | Event Dates
+   Value:  "10% off" → 10pct  |  "$250 voucher" → grand_prize
+   Event:  must match ?event= URL param (case-insensitive)
+   ================================================= */
+async function loadCodes() {
+  try {
+    const r = await fetch(CFG.SHEET_CSV_URL);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    parseCSV(await r.text());
+    console.log(`[Viator] Loaded ${codes['10pct'].length} discount + ${codes['grand_prize'].length} grand prize codes for "${eventId}"`);
+  } catch(e) {
+    console.warn('Sheet load failed, using demo codes:', e);
+    loadDemoCodes();
+  }
+}
+
+function loadDemoCodes() {
+  // Mirrors your actual sheet data as fallback
+  [
+    { code:'hyhskjkn', type:'10pct'       },
+    { code:'hk76hhl',  type:'10pct'       },
+    { code:'hik86h',   type:'10pct'       },
+    { code:'kgikbl',   type:'10pct'       },
+    { code:'lsh9kb',   type:'10pct'       },
+    { code:'shojmkl',  type:'grand_prize' },
+    { code:'kohinkl',  type:'grand_prize' },
+  ].forEach(({ code, type }) => {
+    codes[type].push({
+      code,
+      validity: type === 'grand_prize' ? 'Redeemable at viator.com · This event only' : 'Valid 30 days · This event only'
+    });
+  });
+  refreshStats();
+}
+
+function parseCSV(text) {
+  const rows = text.replace(/\r/g, '').trim().split('\n');
+
+  // Detect column positions from header row
+  const hdr  = rows[0].toLowerCase().split(',').map(v => v.trim().replace(/^"|"$/g,''));
+  const iCode  = hdr.findIndex(h => h.includes('promo'));
+  const iVal   = hdr.findIndex(h => h.includes('value'));
+  const iEvent = hdr.findIndex(h => h === 'event');
+  const iDates = hdr.findIndex(h => h.includes('date'));
+
+  // Use fallback column indices if headers not found
+  const cCode  = iCode  >= 0 ? iCode  : 0;
+  const cVal   = iVal   >= 0 ? iVal   : 1;
+  const cEvent = iEvent >= 0 ? iEvent : 2;
+  const cDates = iDates >= 0 ? iDates : 3;
+
+  rows.slice(1).forEach(row => {
+    if (!row.trim()) return;
+
+    // Handle commas inside quoted fields
+    const parts = parseCSVRow(row);
+    const code  = (parts[cCode]  || '').trim();
+    const val   = (parts[cVal]   || '').toLowerCase().trim();
+    const evnt  = (parts[cEvent] || '').trim().toUpperCase();
+    const dates = (parts[cDates] || '').trim();
+
+    if (!code) return;
+
+    // Filter by event — if sheet has event column, only load matching rows
+    // If event cell is blank, include it for all events (backwards compat)
+    if (evnt && evnt !== eventId) return;
+
+    // Capture event dates from first matching row
+    if (dates && !eventDates) {
+      eventDates = dates;
+      updateEventDisplay();
+    }
+
+    const validity = dates
+      ? `Valid for: ${dates}`
+      : 'Valid for this event only';
+
+    if (val.includes('250') || val.includes('voucher')) {
+      codes['grand_prize'].push({ code, validity: `$250 Viator Voucher · ${validity}` });
+    } else if (val.includes('10') || val.includes('off') || val.includes('discount')) {
+      codes['10pct'].push({ code, validity });
+    }
+  });
+
+  refreshStats();
+}
+
+// Proper CSV row parser that handles quoted fields containing commas
+function parseCSVRow(row) {
+  const result = [];
+  let cur = '', inQuote = false;
+  for (let i = 0; i < row.length; i++) {
+    const ch = row[i];
+    if (ch === '"') { inQuote = !inQuote; }
+    else if (ch === ',' && !inQuote) { result.push(cur.trim()); cur = ''; }
+    else { cur += ch; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function updateEventDisplay() {
+  if (eventDates) {
+    document.getElementById('eventLabel').textContent = `✈️ ${eventId}`;
+    document.getElementById('statEvent').textContent  = eventId;
+    const datesEl = document.getElementById('statDates');
+    const chipEl  = document.getElementById('statDateChip');
+    if (datesEl) { datesEl.textContent = eventDates; }
+    if (chipEl)  { chipEl.style.display = ''; }
+    // Also update the dc chip if present
+    const dc = document.getElementById('eventDatesChip');
+    if (dc) dc.textContent = '📅 ' + eventDates;
+  }
+}
+
+function refreshStats() {
+  document.getElementById('statGrand').textContent = `${codes['grand_prize'].length} / ${CFG.GRAND_PRIZES_PER_EVENT}`;
+}
+
+/* =================================================
+   FORM CHECK
+   ================================================= */
+function checkReady() {
+  const name   = document.getElementById('fName').value.trim();
+  const agency = document.getElementById('fAgency').value.trim();
+  const email  = document.getElementById('fEmail').value.trim();
+  const ok     = name.length>0 && agency.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  document.getElementById('spinBtn').disabled = !ok;
+  document.getElementById('wheelLock').classList.toggle('hidden', ok);
+}
+
+function validateForm() {
+  if (!document.getElementById('fName').value.trim())              { showToast('Please enter your name ✍️');     return false; }
+  if (!document.getElementById('fAgency').value.trim())            { showToast('Please enter your agency 🏢');   return false; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('fEmail').value.trim()))
+                                                                    { showToast('Please enter a valid email 📧'); return false; }
+  return true;
+}
+
+/* =================================================
+   SPIN
+   ================================================= */
+async function handleSpin() {
+  if (spinning) return;
+  if (!validateForm()) return;
+
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('wheelLock').classList.remove('hidden');
+
+  const prize  = choosePrize();
+  const segIdx = pickSeg(prize);
+  await animateSpin(segIdx);
+
+  const codeObj = dispense(prize);
+  currentCode   = codeObj ? codeObj.code : 'SEE-STAFF';
+  spinCount++;
+  document.getElementById('statSpins').textContent = spinCount;
+
+  await logEntry(prize, codeObj);
+
+  setTimeout(() => {
+    showResult(prize, codeObj);
+    if (prize==='grand_prize') fireConfetti();
+  }, 450);
+}
+
+function choosePrize() {
+  if (codes['grand_prize'].length>0 && grandGiven<CFG.GRAND_PRIZES_PER_EVENT && Math.random()<(codes['grand_prize'].length/25)) {
+    grandGiven++; return 'grand_prize';
+  }
+  return '10pct';
+}
+
+function pickSeg(prizeType) {
+  const m = SEGMENTS.map((s,i)=>s.type===prizeType?i:-1).filter(i=>i>=0);
+  return m[Math.floor(Math.random()*m.length)];
+}
+
+function animateSpin(targetIdx) {
+  return new Promise(resolve => {
+    const arc        = (2*Math.PI)/SEGMENTS.length;
+    const segMid     = targetIdx*arc + arc/2;
+    const spins      = (5+Math.floor(Math.random()*4))*2*Math.PI;
+    const norm       = ((wheelAngle%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+    const toTarget   = ((spins-segMid)-norm+2*Math.PI)%(2*Math.PI);
+    const finalAngle = wheelAngle + toTarget + spins;
+    const duration   = 4200 + Math.random()*1400;
+    const startAngle = wheelAngle;
+    const t0         = performance.now();
+
+    const ease = x => 1-Math.pow(1-x,4);
+
+    (function frame(now) {
+      const p = Math.min((now-t0)/duration, 1);
+      wheelAngle = startAngle + (finalAngle-startAngle)*ease(p);
+      drawWheel(wheelAngle);
+      if (p<1) requestAnimationFrame(frame);
+      else { spinning=false; resolve(); }
+    })(t0);
+  });
+}
+
+function dispense(prizeType) {
+  if (codes[prizeType].length>0) return codes[prizeType].shift();
+  return codes['10pct'].shift() || null;
+}
+
+/* =================================================
+   SHOW RESULT
+   ================================================= */
+function showResult(prizeType, codeObj) {
+  const fname = document.getElementById('fName').value.trim().split(' ')[0];
+  const code  = codeObj ? codeObj.code : 'SEE-STAFF';
+  const card  = document.getElementById('resultCard');
+
+  document.getElementById('resCode').textContent   = code;
+  document.getElementById('resExpiry').textContent = codeObj ? codeObj.validity : '';
+  currentCode = code;
+
+  if (prizeType==='grand_prize') {
+    card.className='result-card grand';
+    document.getElementById('resEmoji').textContent = '🏆';
+    document.getElementById('resTitle').textContent = 'JACKPOT! $250 Voucher!';
+    document.getElementById('resMsg').textContent   = `Incredible, ${fname}! You've won a $250 Viator voucher — one of only 2 at this event!`;
+  } else {
+    card.className='result-card';
+    const phrases=['Bon Voyage!','Happy Travels!','Adventure Awaits!','You\'re a Winner!'];
+    document.getElementById('resEmoji').textContent = '🎟️';
+    document.getElementById('resTitle').textContent = phrases[spinCount % phrases.length];
+    document.getElementById('resMsg').textContent   = `Here's your exclusive 10% off code, ${fname}! Use it at viator.com when booking your next experience.`;
+  }
+
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeResult() {
+  document.getElementById('overlay').classList.remove('show');
+  ['fName','fAgency','fEmail'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fIsAgent').checked=false;
+  checkReady();
+  refreshStats();
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(currentCode)
+    .then(()=>showToast('Copied to clipboard! 📋'))
+    .catch(()=>showToast('Long-press the code to copy'));
+}
+
+/* =================================================
+   LOG SIGN-UP
+   ================================================= */
+async function logEntry(prizeType, codeObj) {
+  const data = {
+    timestamp: new Date().toISOString(),
+    event:     eventId,
+    name:      document.getElementById('fName').value.trim(),
+    agency:    document.getElementById('fAgency').value.trim(),
+    email:     document.getElementById('fEmail').value.trim(),
+    isViatorAgent: document.getElementById('fIsAgent').checked,
+    prizeType,
+    code: codeObj ? codeObj.code : '',
+  };
+
+  if (CFG.APPS_SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE') {
+    console.log('[Demo] Would log:', data); return;
+  }
+  try {
+    await fetch(CFG.APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data),
+    });
+  } catch(e) { console.warn('Log failed:', e); }
+}
+
+/* =================================================
+   CONFETTI
+   ================================================= */
+function fireConfetti() {
+  const C=['#8d37ff','#00c295','#ff2579','#f86148','#00d6db','#ffffff'];
+  for (let i=0;i<90;i++) {
+    const el=document.createElement('div');
+    el.className='cf';
+    const w=6+Math.random()*10, h=8+Math.random()*14;
+    Object.assign(el.style,{
+      left: Math.random()*100+'vw', top:'-15px',
+      width: w+'px', height: h+'px',
+      background: C[Math.floor(Math.random()*C.length)],
+      borderRadius: Math.random()>.4?'50%':'2px',
+      animationDuration: (2+Math.random()*3)+'s',
+      animationDelay: (Math.random()*1.2)+'s',
+    });
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 5500);
+  }
+}
+
+/* =================================================
+   TOAST
+   ================================================= */
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+</script>
+
+<!--
+=====================================================
+GOOGLE APPS SCRIPT — Captures sign-ups to a Sheet
+=====================================================
+1. Open (or create) a Google Sheet for responses.
+2. Go to Extensions → Apps Script.
+3. Paste the function below, replacing any existing code.
+4. Click Deploy → New Deployment → Web App.
+   Execute as: Me | Who has access: Anyone
+5. Copy the Web App URL → paste into CFG.APPS_SCRIPT_URL above.
+
+function doPost(e) {
+  try {
+    var data  = JSON.parse(e.postData.contents);
+    var ss    = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Signups') || ss.insertSheet('Signups');
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['Timestamp','Event','Full Name','Agency','Email','Viator Agent?','Prize Type','Promo Code']);
+      sheet.getRange(1,1,1,8).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+    }
+
+    sheet.appendRow([
+      data.timestamp, data.event, data.name, data.agency, data.email,
+      data.isViatorAgent ? 'Yes' : 'No', data.prizeType, data.code
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({status:'ok'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({status:'error',msg:err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+=====================================================
+-->
+
+</body>
+</html>
