@@ -159,6 +159,18 @@ body {
 }
 .hero p strong { color: #a8fce8; font-weight: 700; }
 
+.hero-event-name {
+  margin-top: 14px;
+  font-size: 1rem; font-weight: 700;
+  color: rgba(255,255,255,0.95);
+  letter-spacing: 0.5px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 100px;
+  display: inline-block;
+  padding: 5px 16px;
+}
+
 /* =============================================
    STATS ROW
    ============================================= */
@@ -570,6 +582,7 @@ canvas#wheelCanvas {
   <div class="hero">
     <h1>Unlock Your Exclusive Event Offer<br><span class="accent">&amp; Win Up to $250</span></h1>
     <p>Register below to spin for a chance to win up to a <strong>$250 travel voucher</strong> and receive your event-only promo code.</p>
+    <div id="heroEventName" class="hero-event-name" style="display:none;"></div>
     <div class="event-pill" id="heroPill" style="display:none;margin-top:14px;justify-content:center;"><span class="dot"></span><span id="eventLabel">Loading…</span></div>
   </div>
 </div>
@@ -709,7 +722,7 @@ const CFG = {
 
   // Published Google Sheet CSV — 4 columns: Promocodes | Value | Event | Event Dates
   // Value is "10% off" or "$250 voucher". Event must match the ?event= URL param.
-  SHEET_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbPv3ydGZ5_jJ8hlG9kcFKp7X4JeeTnktmHKJzw5HHvP_OjQ9IOZkMNTmC_StOf0jXUho8dUheXrTs/pub?gid=0&single=true&output=csv',
+  SHEET_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRN6Enjcymi6mkbC50vCvxCuF1f4iwYQFE7BO1onoKbaClaxn1AAJG0Uafz4TnJH5Wl81-wlGppzRsc/pub?gid=0&single=true&output=csv',
 
   // Google Apps Script Web App URL for email logging.
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbynkU7w6Ly1j5G6U2oN_7sbN3XeorEMkfzUNdc0UrSPCIXwZYdLEjSgoaP6xOMS9a_N/exec',
@@ -749,17 +762,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (n) n.remove();
   }
 
+  // URL param still supported as override, but auto-detection happens after CSV loads
   const params = new URLSearchParams(window.location.search);
   eventId = (params.get('event') || '').toUpperCase().trim();
-  if (eventId) {
-    document.getElementById('eventLabel').textContent = '✈️ ' + eventId;
-    document.getElementById('statEvent').textContent  = eventId;
-    const pill = document.getElementById('heroPill');
-    if (pill) pill.style.display = 'inline-flex';
-  } else {
-    const chip = document.querySelector('.stat-chip:nth-child(3)');
-    if (chip) chip.style.display = 'none';
-  }
 
   buildBg();
   initWheel();
@@ -923,26 +928,96 @@ function loadDemoCodes() {
   refreshStats();
 }
 
+/* =================================================
+   DATE PARSING
+   Parses "April 21-26 2026" or "April 21-May 3 2026"
+   Returns { start: Date, end: Date } or null
+   ================================================= */
+function parseEventDateRange(str) {
+  if (!str) return null;
+  const MONTHS = { january:0,february:1,march:2,april:3,may:4,june:5,
+                   july:6,august:7,september:8,october:9,november:10,december:11 };
+
+  str = str.trim();
+
+  // "April 21-26 2026" — same month
+  let m = str.match(/^(\w+)\s+(\d+)-(\d+)\s+(\d{4})$/i);
+  if (m) {
+    const mo = MONTHS[m[1].toLowerCase()];
+    if (mo === undefined) return null;
+    const yr = parseInt(m[4]);
+    return {
+      start: new Date(yr, mo, parseInt(m[2])),
+      end:   new Date(yr, mo, parseInt(m[3]))
+    };
+  }
+
+  // "April 21 - May 3 2026" — cross month
+  m = str.match(/^(\w+)\s+(\d+)\s*-\s*(\w+)\s+(\d+)\s+(\d{4})$/i);
+  if (m) {
+    const mo1 = MONTHS[m[1].toLowerCase()];
+    const mo2 = MONTHS[m[3].toLowerCase()];
+    if (mo1 === undefined || mo2 === undefined) return null;
+    const yr = parseInt(m[5]);
+    return {
+      start: new Date(yr, mo1, parseInt(m[2])),
+      end:   new Date(yr, mo2, parseInt(m[4]))
+    };
+  }
+
+  return null;
+}
+
+function isDateInRange(range) {
+  if (!range) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(range.end);
+  end.setHours(23, 59, 59, 999);
+  return today >= range.start && today <= end;
+}
+
 function parseCSV(text) {
   const rows = text.replace(/\r/g, '').trim().split('\n');
 
   // Detect column positions from header row
-  const hdr  = rows[0].toLowerCase().split(',').map(v => v.trim().replace(/^"|"$/g,''));
+  const hdr    = rows[0].toLowerCase().split(',').map(v => v.trim().replace(/^"|"$/g,''));
   const iCode  = hdr.findIndex(h => h.includes('promo'));
   const iVal   = hdr.findIndex(h => h.includes('value'));
   const iEvent = hdr.findIndex(h => h === 'event');
   const iDates = hdr.findIndex(h => h.includes('date'));
 
-  // Use fallback column indices if headers not found
   const cCode  = iCode  >= 0 ? iCode  : 0;
   const cVal   = iVal   >= 0 ? iVal   : 1;
   const cEvent = iEvent >= 0 ? iEvent : 2;
   const cDates = iDates >= 0 ? iDates : 3;
 
+  // First pass: collect all unique events with their date ranges
+  const allEvents = {};
   rows.slice(1).forEach(row => {
     if (!row.trim()) return;
+    const parts = parseCSVRow(row);
+    const evnt  = (parts[cEvent] || '').trim();
+    const dates = (parts[cDates] || '').trim();
+    if (evnt && dates && !allEvents[evnt]) {
+      allEvents[evnt] = { name: evnt, dates, range: parseEventDateRange(dates) };
+    }
+  });
 
-    // Handle commas inside quoted fields
+  // If no URL param, auto-detect current event by today's date
+  if (!eventId) {
+    for (const ev of Object.values(allEvents)) {
+      if (isDateInRange(ev.range)) {
+        eventId  = ev.name.toUpperCase();
+        eventDates = ev.dates;
+        break;
+      }
+    }
+  }
+
+  // Second pass: load codes for matched event (or blank-event fallback rows)
+  rows.slice(1).forEach(row => {
+    if (!row.trim()) return;
     const parts = parseCSVRow(row);
     const code  = (parts[cCode]  || '').trim();
     const val   = (parts[cVal]   || '').toLowerCase().trim();
@@ -951,19 +1026,12 @@ function parseCSV(text) {
 
     if (!code) return;
 
-    // Filter by event — if sheet has event column, only load matching rows
-    // If event cell is blank, include it for all events (backwards compat)
+    // Load if: matches current event, OR event cell is blank (demo/fallback)
     if (evnt && evnt !== eventId) return;
 
-    // Capture event dates from first matching row
-    if (dates && !eventDates) {
-      eventDates = dates;
-      updateEventDisplay();
-    }
+    if (dates && !eventDates) eventDates = dates;
 
-    const validity = dates
-      ? `Valid for: ${dates}`
-      : 'Valid for this event only';
+    const validity = eventDates ? `Valid for: ${eventDates}` : 'Valid for this event only';
 
     if (val.includes('250') || val.includes('voucher')) {
       codes['grand_prize'].push({ code, validity: `$250 Viator Voucher · ${validity}` });
@@ -972,6 +1040,7 @@ function parseCSV(text) {
     }
   });
 
+  updateEventDisplay();
   refreshStats();
 }
 
@@ -990,16 +1059,35 @@ function parseCSVRow(row) {
 }
 
 function updateEventDisplay() {
+  // Find the event name from the raw event column (preserve original casing)
+  // eventId is uppercased internally, so find the display name from allEvents if possible
+  const displayName = eventId || '';
+  const pill = document.getElementById('heroPill');
+  const labelEl = document.getElementById('eventLabel');
+  const statEl  = document.getElementById('statEvent');
+  const datesEl = document.getElementById('statDates');
+  const chipEl  = document.getElementById('statDateChip');
+
+  if (displayName) {
+    if (labelEl) labelEl.textContent = displayName;
+    if (statEl)  statEl.textContent  = displayName;
+    if (pill)    { pill.style.display = 'inline-flex'; }
+
+    // Show event name prominently in the hero banner
+    const heroEvent = document.getElementById('heroEventName');
+    if (heroEvent) {
+      heroEvent.textContent = displayName;
+      heroEvent.style.display = 'block';
+    }
+  } else {
+    if (pill) pill.style.display = 'none';
+    const chip3 = document.querySelector('.stat-chip:nth-child(3)');
+    if (chip3) chip3.style.display = 'none';
+  }
+
   if (eventDates) {
-    document.getElementById('eventLabel').textContent = `✈️ ${eventId}`;
-    document.getElementById('statEvent').textContent  = eventId;
-    const datesEl = document.getElementById('statDates');
-    const chipEl  = document.getElementById('statDateChip');
-    if (datesEl) { datesEl.textContent = eventDates; }
-    if (chipEl)  { chipEl.style.display = ''; }
-    // Also update the dc chip if present
-    const dc = document.getElementById('eventDatesChip');
-    if (dc) dc.textContent = '📅 ' + eventDates;
+    if (datesEl) datesEl.textContent = eventDates;
+    if (chipEl)  chipEl.style.display = '';
   }
 }
 
