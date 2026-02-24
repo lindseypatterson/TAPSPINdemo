@@ -86,46 +86,27 @@ body {
   100% { transform: translateY(-15vh) rotate(360deg); opacity: 0; }
 }
 
-/* =============================================
-   HEADER
-   ============================================= */
-header {
-  position: relative; z-index: 20;
-  padding: 0 24px;
-  height: 60px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: var(--white);
-  border-bottom: 1.5px solid var(--border);
-  box-shadow: 0 1px 8px rgba(0,87,68,0.06);
+.tap-logo {
+  height: 36px; width: auto; display: block;
+  /* logo is dark bg — invert to white for green banner */
+  filter: brightness(0) invert(1);
 }
-
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.logo-mark {
-  width: 36px; height: 36px; border-radius: 8px;
-  background: var(--viator);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; font-weight: 900; color: var(--white);
-  flex-shrink: 0;
-}
-.logo-words { display: flex; flex-direction: column; line-height: 1.15; }
-.logo-words .brand { font-size: 0.92rem; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
-.logo-words .sub   { font-size: 0.6rem; font-weight: 700; color: var(--viator); letter-spacing: 1.8px; text-transform: uppercase; }
 
 .event-pill {
-  background: rgba(0,135,104,0.08);
-  border: 1.5px solid rgba(0,135,104,0.2);
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.3);
   border-radius: 100px; padding: 5px 12px;
-  font-size: 0.66rem; font-weight: 700; color: var(--viator);
+  font-size: 0.66rem; font-weight: 700; color: var(--white);
   letter-spacing: 1px; text-transform: uppercase;
   display: flex; align-items: center; gap: 7px;
   flex-shrink: 0;
 }
 .event-pill .dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--viator);
+  background: rgba(255,255,255,0.9);
   animation: blink 2s ease-in-out infinite; flex-shrink: 0;
 }
-@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
 /* =============================================
    PAGE LAYOUT
@@ -133,47 +114,47 @@ header {
 .page {
   position: relative; z-index: 5;
   display: flex; flex-direction: column; align-items: center;
-  padding: 32px 16px 60px; gap: 28px;
+  padding: 24px 16px 60px; gap: 20px;
 }
 
 /* =============================================
-   HERO BANNER — Viator green gradient top strip
+   HERO BANNER — full-width Viator green
    ============================================= */
 .hero-banner {
   width: 100%; background: var(--viator);
-  padding: 28px 24px 32px;
-  text-align: center;
+  padding: 20px 20px 28px;
   position: relative; overflow: hidden;
 }
 .hero-banner::before {
   content: '';position:absolute;inset:0;
-  background: linear-gradient(135deg, rgba(0,194,149,0.35) 0%, transparent 60%),
-              linear-gradient(225deg, rgba(0,214,219,0.2) 0%, transparent 50%);
+  background: linear-gradient(135deg, rgba(0,194,149,0.3) 0%, transparent 55%),
+              linear-gradient(225deg, rgba(0,214,219,0.15) 0%, transparent 50%);
   pointer-events: none;
 }
 .hero-banner::after {
-  content: '';position:absolute;bottom:-1px;left:0;right:0;height:28px;
+  content: '';position:absolute;bottom:-1px;left:0;right:0;height:24px;
   background: var(--bg);
   clip-path: ellipse(55% 100% at 50% 100%);
 }
 
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 100px; padding: 4px 14px;
-  font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.9);
-  letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 14px;
+.banner-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; position: relative; z-index: 1;
+  gap: 12px;
+}
+
+.hero {
+  text-align: left; position: relative; z-index: 1;
 }
 .hero h1 {
-  font-size: clamp(1.7rem, 5.5vw, 2.8rem);
-  font-weight: 900; line-height: 1.08; letter-spacing: -0.5px;
-  color: var(--white); margin-bottom: 10px; position: relative; z-index: 1;
+  font-size: clamp(1.35rem, 4.5vw, 2.2rem);
+  font-weight: 900; line-height: 1.12; letter-spacing: -0.4px;
+  color: var(--white); margin-bottom: 10px;
 }
 .hero h1 .accent { color: #a8fce8; }
 .hero p {
-  font-size: 0.88rem; color: rgba(255,255,255,0.8);
-  line-height: 1.65; position: relative; z-index: 1; max-width: 480px; margin: 0 auto;
+  font-size: 0.85rem; color: rgba(255,255,255,0.82);
+  line-height: 1.6; max-width: 520px;
 }
 .hero p strong { color: #a8fce8; font-weight: 700; }
 
@@ -213,7 +194,14 @@ header {
    ============================================= */
 .game-wrap {
   display: flex; flex-direction: column; align-items: center;
-  gap: 24px; width: 100%; max-width: 900px;
+  gap: 20px; width: 100%; max-width: 900px;
+}
+/* Mobile: wheel smaller so both fit on screen */
+@media (max-width: 679px) {
+  .game-wrap { gap: 16px; }
+  .wheel-wrap { --wsize: min(240px, calc(100vw - 80px)) !important; }
+  .hub-circle { width: 36px; height: 36px; font-size: 0.9rem; }
+  .wheel-pointer { border-left-width: 10px; border-right-width: 10px; border-top-width: 22px; top: -10px; }
 }
 @media (min-width: 680px) {
   .game-wrap { flex-direction: row; align-items: flex-start; justify-content: center; }
@@ -486,14 +474,18 @@ canvas#wheelCanvas {
    MOBILE FINE-TUNE
    ============================================= */
 @media (max-width: 679px) {
-  .page { padding: 18px 13px 44px; gap: 18px; }
-  header { padding: 0 14px; }
-  .logo-words .brand { font-size: 0.88rem; }
-  .form-card { padding: 22px 18px; border-radius: 18px; }
-  .result-card { padding: 28px 20px; border-radius: 20px; }
-  .code-val { font-size: 1.2rem; letter-spacing: 2px; }
-  .result-card h2 { font-size: 1.4rem; }
-  .hero-banner { padding: 22px 16px 30px; }
+  .page { padding: 16px 12px 40px; gap: 16px; }
+  .hero-banner { padding: 16px 16px 26px; }
+  .hero h1 { font-size: 1.25rem; }
+  .hero p { font-size: 0.8rem; }
+  .tap-logo { height: 28px; }
+  .form-card { padding: 20px 16px; border-radius: 16px; }
+  .result-card { padding: 24px 18px; border-radius: 18px; }
+  .code-val { font-size: 1.15rem; letter-spacing: 2px; }
+  .result-card h2 { font-size: 1.35rem; }
+  .stats-row { gap: 7px; }
+  .stat-chip { padding: 10px 12px; }
+  .stat-val { font-size: 1.1rem; }
 }
 </style>
 </head>
@@ -503,25 +495,15 @@ canvas#wheelCanvas {
 <div class="particles" id="particles"></div>
 <div class="float-icons" id="floatIcons"></div>
 
-<!-- HEADER -->
-<header>
-  <div class="logo">
-    <div class="logo-mark">V</div>
-    <div class="logo-words">
-      <span class="brand">Viator</span>
-      <span class="sub">Travel Agents</span>
-    </div>
-  </div>
-  <div class="event-pill"><span class="dot"></span><span id="eventLabel">Loading…</span></div>
-</header>
-
-<!-- HERO BANNER — outside .page so it's full width -->
+<!-- HERO BANNER — full width green, no separate header -->
 <div class="hero-banner">
+  <div class="banner-top">
+    <img src="data:image/jpeg;base64,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" alt="Viator Travel Agents" class="tap-logo">
+    <div class="event-pill"><span class="dot"></span><span id="eventLabel">Loading…</span></div>
+  </div>
   <div class="hero">
-    <div class="hero-badge">🌍 Exclusive Agent Perks</div>
-    <h1><span class="accent">Spin to Win</span><br>Your Adventure Deal</h1>
-    <p>Fill in your details, spin the wheel &amp; unlock your exclusive promo code.<br>
-      <strong>$250 vouchers</strong> awarded every event — is today your day?</p>
+    <h1>Unlock Your Exclusive<br><span class="accent">Event Offer &amp; Win Up to $250</span></h1>
+    <p>Register below to spin for a chance to win up to a <strong>$250 travel voucher</strong> and receive your event-only promo code.</p>
   </div>
 </div>
 
