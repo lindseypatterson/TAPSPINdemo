@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* =============================================
-   DESIGN TOKENS — Light, clean, Viator brand
+   DESIGN TOKENS
    ============================================= */
 :root {
   --purple:   #8d37ff;
@@ -138,13 +138,13 @@ body {
 }
 
 .banner-top {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: center;
   margin-bottom: 20px; position: relative; z-index: 1;
   gap: 12px;
 }
 
 .hero {
-  text-align: left; position: relative; z-index: 1;
+  text-align: center; position: relative; z-index: 1;
 }
 .hero h1 {
   font-size: clamp(1.35rem, 4.5vw, 2.2rem);
@@ -154,7 +154,7 @@ body {
 .hero h1 .accent { color: #a8fce8; }
 .hero p {
   font-size: 0.85rem; color: rgba(255,255,255,0.82);
-  line-height: 1.6; max-width: 520px;
+  line-height: 1.6; max-width: 520px; margin: 0 auto;
 }
 .hero p strong { color: #a8fce8; font-weight: 700; }
 
@@ -333,19 +333,40 @@ canvas#wheelCanvas {
 }
 .field input::placeholder { color: var(--text-dimmer); font-weight: 400; }
 
-.check-row {
-  display: flex; align-items: flex-start; gap: 11px; cursor: pointer;
-  padding: 11px 13px;
-  background: var(--surface2); border: 1.5px solid var(--border);
-  border-radius: 10px; transition: border-color 0.2s, background 0.2s;
+/* Agent toggle */
+.agent-toggle-wrap {
+  display: flex; flex-direction: column; gap: 6px;
 }
-.check-row:hover { border-color: var(--border-mid); background: #edf7f3; }
-.check-row input[type="checkbox"] {
-  width: 17px; height: 17px; margin-top: 1px;
-  accent-color: var(--viator); cursor: pointer; flex-shrink: 0;
+.agent-toggle-label {
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--text-mid); letter-spacing: 1px; text-transform: uppercase;
 }
-.check-row span { font-size: 0.81rem; color: var(--text-mid); line-height: 1.45; }
-.check-row strong { color: var(--viator); font-weight: 700; }
+.agent-toggle {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.agent-opt {
+  position: relative;
+}
+.agent-opt input[type="radio"] {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.agent-opt label {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; padding: 12px 8px;
+  background: var(--surface2); border: 2px solid var(--border);
+  border-radius: 12px; cursor: pointer; text-align: center;
+  transition: all 0.18s; text-transform: none; letter-spacing: 0;
+  font-size: 0.82rem; font-weight: 600; color: var(--text-mid);
+  line-height: 1.3;
+}
+.agent-opt label .opt-icon { font-size: 1.4rem; }
+.agent-opt label .opt-sub { font-size: 0.68rem; font-weight: 400; color: var(--text-dimmer); }
+.agent-opt input:checked + label {
+  border-color: var(--viator); background: #edf7f4; color: var(--viator);
+  box-shadow: 0 0 0 3px rgba(0,135,104,0.1);
+}
+.agent-opt input:checked + label .opt-sub { color: var(--text-mid); }
+.agent-opt label:hover { border-color: var(--border-mid); background: #f4faf8; }
 
 /* =============================================
    SPIN BUTTON
@@ -426,13 +447,26 @@ canvas#wheelCanvas {
 .result-card.grand .code-val { color: var(--purple); }
 .code-expiry { font-size: 0.68rem; color: var(--text-dimmer); margin-top: 7px; }
 
+.result-actions {
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 18px; flex-wrap: wrap;
+}
+
 .copy-btn {
   background: none; border: 1.5px solid var(--border-mid);
   border-radius: 100px; padding: 7px 18px;
   color: var(--text-mid); font-size: 0.78rem; font-weight: 600; font-family: var(--font);
-  cursor: pointer; transition: all 0.2s; margin-bottom: 18px;
+  cursor: pointer; transition: all 0.2s;
 }
 .copy-btn:hover { border-color: var(--viator); color: var(--viator); background: #f0faf7; }
+
+.email-btn {
+  background: none; border: 1.5px solid var(--border-mid);
+  border-radius: 100px; padding: 7px 18px;
+  color: var(--text-mid); font-size: 0.78rem; font-weight: 600; font-family: var(--font);
+  cursor: pointer; transition: all 0.2s;
+}
+.email-btn:hover { border-color: var(--viator); color: var(--viator); background: #f0faf7; }
+.email-btn:disabled { opacity: 0.5; cursor: default; }
 
 .done-btn {
   width: 100%; padding: 13px 22px;
@@ -440,6 +474,7 @@ canvas#wheelCanvas {
   color: var(--white); font-size: 0.92rem; font-weight: 800; font-family: var(--font);
   cursor: pointer; box-shadow: 0 4px 16px rgba(0,135,104,0.35);
   transition: transform 0.18s, box-shadow 0.18s;
+  display: block; text-align: center; text-decoration: none;
 }
 .done-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,135,104,0.45); }
 
@@ -499,11 +534,11 @@ canvas#wheelCanvas {
 <div class="hero-banner">
   <div class="banner-top">
     <img src="data:image/jpeg;base64,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" alt="Viator Travel Agents" class="tap-logo">
-    <div class="event-pill"><span class="dot"></span><span id="eventLabel">Loading…</span></div>
   </div>
   <div class="hero">
-    <h1>Unlock Your Exclusive<br><span class="accent">Event Offer &amp; Win Up to $250</span></h1>
+    <h1>Unlock Your Exclusive Event Offer<br><span class="accent">&amp; Win Up to $250</span></h1>
     <p>Register below to spin for a chance to win up to a <strong>$250 travel voucher</strong> and receive your event-only promo code.</p>
+    <div class="event-pill" id="heroPill" style="display:none;margin-top:14px;justify-content:center;"><span class="dot"></span><span id="eventLabel">Loading…</span></div>
   </div>
 </div>
 
@@ -580,15 +615,32 @@ canvas#wheelCanvas {
           <label>Email Address</label>
           <input type="email" id="fEmail" placeholder="jane@sunrisetravel.com" autocomplete="email">
         </div>
-        <label class="check-row">
-          <input type="checkbox" id="fIsAgent">
-          <span>I'm already a <strong>Viator Travel Agent</strong> partner</span>
-        </label>
+        <div class="agent-toggle-wrap">
+          <span class="agent-toggle-label">Your Viator Status</span>
+          <div class="agent-toggle">
+            <div class="agent-opt">
+              <input type="radio" name="agentStatus" id="fIsNew" value="new">
+              <label for="fIsNew">
+                <span class="opt-icon">✨</span>
+                New to Viator
+                <span class="opt-sub">I'd like to sign up</span>
+              </label>
+            </div>
+            <div class="agent-opt">
+              <input type="radio" name="agentStatus" id="fIsAgent" value="existing">
+              <label for="fIsAgent">
+                <span class="opt-icon">🏅</span>
+                Existing Agent
+                <span class="opt-sub">Already a partner</span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
       <button class="spin-btn" id="spinBtn" onclick="handleSpin()">
         <span class="btn-icon">🌀</span> Spin the Wheel!
       </button>
-      <p class="form-legal">One spin per person · Promo codes are event-specific and non-transferable</p>
+      <p class="form-legal">One spin per person · Promo codes are event-specific and non-transferable<br>By submitting your details you agree to receive email communications from Viator regarding exclusive offers, promotions, and travel agent program updates. You may unsubscribe at any time.</p>
     </div>
 
   </div><!-- /game-wrap -->
@@ -605,8 +657,11 @@ canvas#wheelCanvas {
       <div class="code-val" id="resCode">——</div>
       <div class="code-expiry" id="resExpiry"></div>
     </div>
-    <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
-    <button class="done-btn" onclick="closeResult()">All Done — Happy Travels! ✈️</button>
+    <div class="result-actions">
+      <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
+      <button class="email-btn" id="emailCodeBtn" onclick="emailCode()">📧 Email Me My Code</button>
+    </div>
+    <a href="https://www.travelagents.viator.com" target="_blank" class="done-btn" onclick="closeResult()">Start Booking Today ✈️</a>
   </div>
 </div>
 
@@ -650,7 +705,7 @@ let spinCount   = 0;
 let spinning    = false;
 let wheelAngle  = 0;
 let currentCode = '';
-let eventId     = 'DEMO';
+let eventId     = '';
 let eventDates  = '';
 
 /* =================================================
@@ -663,9 +718,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const params = new URLSearchParams(window.location.search);
-  eventId = (params.get('event') || 'DEMO').toUpperCase().trim();
-  document.getElementById('eventLabel').textContent = '✈️ ' + eventId;
-  document.getElementById('statEvent').textContent  = eventId;
+  eventId = (params.get('event') || '').toUpperCase().trim();
+  if (eventId) {
+    document.getElementById('eventLabel').textContent = '✈️ ' + eventId;
+    document.getElementById('statEvent').textContent  = eventId;
+    const pill = document.getElementById('heroPill');
+    if (pill) pill.style.display = 'inline-flex';
+  } else {
+    const chip = document.querySelector('.stat-chip:nth-child(3)');
+    if (chip) chip.style.display = 'none';
+  }
 
   buildBg();
   initWheel();
@@ -673,6 +735,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ['fName','fAgency','fEmail'].forEach(id =>
     document.getElementById(id).addEventListener('input', checkReady)
+  );
+  document.querySelectorAll('input[name="agentStatus"]').forEach(r =>
+    r.addEventListener('change', checkReady)
   );
   checkReady();
 });
@@ -917,16 +982,18 @@ function checkReady() {
   const name   = document.getElementById('fName').value.trim();
   const agency = document.getElementById('fAgency').value.trim();
   const email  = document.getElementById('fEmail').value.trim();
-  const ok     = name.length>0 && agency.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const status = document.querySelector('input[name="agentStatus"]:checked');
+  const ok     = name.length>0 && agency.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !!status;
   document.getElementById('spinBtn').disabled = !ok;
   document.getElementById('wheelLock').classList.toggle('hidden', ok);
 }
 
 function validateForm() {
-  if (!document.getElementById('fName').value.trim())              { showToast('Please enter your name ✍️');     return false; }
-  if (!document.getElementById('fAgency').value.trim())            { showToast('Please enter your agency 🏢');   return false; }
+  if (!document.getElementById('fName').value.trim())              { showToast('Please enter your name ✍️');         return false; }
+  if (!document.getElementById('fAgency').value.trim())            { showToast('Please enter your agency 🏢');       return false; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('fEmail').value.trim()))
-                                                                    { showToast('Please enter a valid email 📧'); return false; }
+                                                                    { showToast('Please enter a valid email 📧');     return false; }
+  if (!document.querySelector('input[name="agentStatus"]:checked')) { showToast('Please select your Viator status'); return false; }
   return true;
 }
 
@@ -936,6 +1003,9 @@ function validateForm() {
 async function handleSpin() {
   if (spinning) return;
   if (!validateForm()) return;
+
+  // Scroll wheel into view before spinning
+  document.getElementById('wheelCanvas').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   spinning = true;
   document.getElementById('spinBtn').disabled = true;
@@ -1021,7 +1091,7 @@ function showResult(prizeType, codeObj) {
     const phrases=['Bon Voyage!','Happy Travels!','Adventure Awaits!','You\'re a Winner!'];
     document.getElementById('resEmoji').textContent = '🎟️';
     document.getElementById('resTitle').textContent = phrases[spinCount % phrases.length];
-    document.getElementById('resMsg').textContent   = `Here's your exclusive 10% off code, ${fname}! Use it at viator.com when booking your next experience.`;
+    document.getElementById('resMsg').textContent   = `Here's your exclusive 10% off code, ${fname}! Use it at travelagents.viator.com when booking your next experience.`;
   }
 
   document.getElementById('overlay').classList.add('show');
@@ -1030,7 +1100,7 @@ function showResult(prizeType, codeObj) {
 function closeResult() {
   document.getElementById('overlay').classList.remove('show');
   ['fName','fAgency','fEmail'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fIsAgent').checked=false;
+  document.querySelectorAll('input[name="agentStatus"]').forEach(r => r.checked = false);
   checkReady();
   refreshStats();
 }
@@ -1039,6 +1109,37 @@ function copyCode() {
   navigator.clipboard.writeText(currentCode)
     .then(()=>showToast('Copied to clipboard! 📋'))
     .catch(()=>showToast('Long-press the code to copy'));
+}
+
+async function emailCode() {
+  const btn   = document.getElementById('emailCodeBtn');
+  const email = document.getElementById('fEmail').value.trim();
+  const name  = document.getElementById('fName').value.trim().split(' ')[0];
+  const code  = currentCode;
+  const expiry = document.getElementById('resExpiry').textContent;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending…';
+
+  const data = {
+    action:    'sendCode',
+    email, name, code, expiry,
+    event: eventId,
+  };
+
+  try {
+    await fetch(CFG.APPS_SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    btn.textContent = '✅ Sent!';
+    showToast('Code emailed to ' + email + ' 📧');
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '📧 Email Me My Code';
+    showToast('Could not send — please copy the code instead');
+  }
 }
 
 /* =================================================
@@ -1051,7 +1152,8 @@ async function logEntry(prizeType, codeObj) {
     name:      document.getElementById('fName').value.trim(),
     agency:    document.getElementById('fAgency').value.trim(),
     email:     document.getElementById('fEmail').value.trim(),
-    isViatorAgent: document.getElementById('fIsAgent').checked,
+    isViatorAgent: document.querySelector('input[name="agentStatus"]:checked')?.value === 'existing',
+    agentStatus:   document.querySelector('input[name="agentStatus"]:checked')?.value || 'not specified',
     prizeType,
     code: codeObj ? codeObj.code : '',
   };
@@ -1102,40 +1204,84 @@ function showToast(msg) {
 
 <!--
 =====================================================
-GOOGLE APPS SCRIPT — Captures sign-ups to a Sheet
+GOOGLE APPS SCRIPT — Captures sign-ups + sends code emails
 =====================================================
 1. Open (or create) a Google Sheet for responses.
 2. Go to Extensions → Apps Script.
-3. Paste the function below, replacing any existing code.
+3. Paste ALL the code below, replacing any existing code.
 4. Click Deploy → New Deployment → Web App.
    Execute as: Me | Who has access: Anyone
 5. Copy the Web App URL → paste into CFG.APPS_SCRIPT_URL above.
 
+IMPORTANT: After updating this code, you must create a NEW deployment
+(not just save) for changes to take effect.
+
 function doPost(e) {
   try {
-    var data  = JSON.parse(e.postData.contents);
+    var data = JSON.parse(e.postData.contents);
+
+    // Route: email code to attendee
+    if (data.action === 'sendCode') {
+      return sendCodeEmail(data);
+    }
+
+    // Default: log sign-up to sheet
     var ss    = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName('Signups') || ss.insertSheet('Signups');
 
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp','Event','Full Name','Agency','Email','Viator Agent?','Prize Type','Promo Code']);
+      sheet.appendRow(['Timestamp','Event','Full Name','Agency','Email','Viator Status','Prize Type','Promo Code']);
       sheet.getRange(1,1,1,8).setFontWeight('bold');
       sheet.setFrozenRows(1);
     }
 
     sheet.appendRow([
       data.timestamp, data.event, data.name, data.agency, data.email,
-      data.isViatorAgent ? 'Yes' : 'No', data.prizeType, data.code
+      data.agentStatus || (data.isViatorAgent ? 'existing' : 'new'), data.prizeType, data.code
     ]);
 
     return ContentService
       .createTextOutput(JSON.stringify({status:'ok'}))
       .setMimeType(ContentService.MimeType.JSON);
+
   } catch(err) {
     return ContentService
       .createTextOutput(JSON.stringify({status:'error',msg:err.message}))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function sendCodeEmail(data) {
+  var subject = 'Your Viator Promo Code' + (data.event ? ' — ' + data.event : '');
+  var body = 'Hi ' + data.name + ',\n\n'
+    + 'Here is your exclusive Viator promo code from today\'s event:\n\n'
+    + '  ' + data.code + '\n\n'
+    + (data.expiry ? data.expiry + '\n\n' : '')
+    + 'To redeem, visit viator.com and enter your code at checkout.\n\n'
+    + 'Happy travels!\n'
+    + 'The Viator Travel Agent Team';
+
+  var htmlBody = '<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">'
+    + '<div style="background:#008768;padding:24px 28px;border-radius:12px 12px 0 0;">'
+    + '<p style="color:#ffffff;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0;">VIATOR TRAVEL AGENTS</p>'
+    + '</div>'
+    + '<div style="background:#f0faf7;padding:28px;border-radius:0 0 12px 12px;border:1px solid #d6ece6;">'
+    + '<p style="font-size:16px;color:#0d2b22;">Hi ' + data.name + ',</p>'
+    + '<p style="color:#3a6357;">Here\'s your exclusive Viator promo code from today\'s event:</p>'
+    + '<div style="background:#ffffff;border:2px dashed #b2d9cf;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">'
+    + '<p style="font-size:11px;font-weight:700;letter-spacing:2px;color:#9dbfb8;text-transform:uppercase;margin:0 0 8px;">YOUR PROMO CODE</p>'
+    + '<p style="font-size:26px;font-weight:900;letter-spacing:4px;color:#008768;margin:0;">' + data.code + '</p>'
+    + (data.expiry ? '<p style="font-size:11px;color:#9dbfb8;margin:8px 0 0;">' + data.expiry + '</p>' : '')
+    + '</div>'
+    + '<p style="color:#3a6357;">To redeem, visit <a href="https://viator.com" style="color:#008768;">viator.com</a> and enter your code at checkout.</p>'
+    + '<p style="color:#3a6357;">Happy travels!<br><strong>The Viator Travel Agent Team</strong></p>'
+    + '</div></div>';
+
+  GmailApp.sendEmail(data.email, subject, body, { htmlBody: htmlBody });
+
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 =====================================================
 -->
