@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -924,16 +925,19 @@ async function loadCodes() {
 }
 
 function loadDemoCodes() {
+  // Mirrors your actual sheet data as fallback
   [
-    { code:'DEMO10OFF', type:'10pct'       },
-    { code:'DEMO10OFF', type:'10pct'       },
-    { code:'DEMO10OFF', type:'10pct'       },
-    { code:'DEMO250',   type:'grand_prize' },
-    { code:'DEMO250',   type:'grand_prize' },
+    { code:'hyhskjkn', type:'10pct'       },
+    { code:'hk76hhl',  type:'10pct'       },
+    { code:'hik86h',   type:'10pct'       },
+    { code:'kgikbl',   type:'10pct'       },
+    { code:'lsh9kb',   type:'10pct'       },
+    { code:'shojmkl',  type:'grand_prize' },
+    { code:'kohinkl',  type:'grand_prize' },
   ].forEach(({ code, type }) => {
     codes[type].push({
       code,
-      validity: 'Demo code — not for redemption'
+      validity: type === 'grand_prize' ? 'Redeemable at viator.com · This event only' : 'Valid 30 days · This event only'
     });
   });
   refreshStats();
@@ -949,26 +953,31 @@ function parseEventDateRange(str) {
   const MONTHS = { january:0,february:1,march:2,april:3,may:4,june:5,
                    july:6,august:7,september:8,october:9,november:10,december:11 };
 
-  // Normalize: remove commas, collapse multiple spaces
-  str = str.trim().replace(/,/g, '').replace(/\s+/g, ' ');
+  str = str.trim();
 
-  // "April 21-26 2026" — same month, no space around dash
+  // "April 21-26 2026" — same month
   let m = str.match(/^(\w+)\s+(\d+)-(\d+)\s+(\d{4})$/i);
   if (m) {
     const mo = MONTHS[m[1].toLowerCase()];
     if (mo === undefined) return null;
     const yr = parseInt(m[4]);
-    return { start: new Date(yr, mo, parseInt(m[2])), end: new Date(yr, mo, parseInt(m[3])) };
+    return {
+      start: new Date(yr, mo, parseInt(m[2])),
+      end:   new Date(yr, mo, parseInt(m[3]))
+    };
   }
 
-  // "April 21 - May 3 2026" or "February 25-April 1 2026" — cross month
+  // "April 21 - May 3 2026" — cross month
   m = str.match(/^(\w+)\s+(\d+)\s*-\s*(\w+)\s+(\d+)\s+(\d{4})$/i);
   if (m) {
     const mo1 = MONTHS[m[1].toLowerCase()];
     const mo2 = MONTHS[m[3].toLowerCase()];
     if (mo1 === undefined || mo2 === undefined) return null;
     const yr = parseInt(m[5]);
-    return { start: new Date(yr, mo1, parseInt(m[2])), end: new Date(yr, mo2, parseInt(m[4])) };
+    return {
+      start: new Date(yr, mo1, parseInt(m[2])),
+      end:   new Date(yr, mo2, parseInt(m[4]))
+    };
   }
 
   return null;
@@ -1012,13 +1021,10 @@ function parseCSV(text) {
 
   // If no URL param, auto-detect current event by today's date
   if (!eventId) {
-    console.log('[Viator] All events found:', Object.keys(allEvents));
     for (const ev of Object.values(allEvents)) {
-      console.log(`[Viator] Checking event "${ev.name}" dates "${ev.dates}" range:`, ev.range, 'in range:', isDateInRange(ev.range));
       if (isDateInRange(ev.range)) {
         eventId  = ev.name.toUpperCase();
         eventDates = ev.dates;
-        console.log('[Viator] Auto-detected event:', eventId, eventDates);
         break;
       }
     }
@@ -1051,12 +1057,7 @@ function parseCSV(text) {
 
   updateEventDisplay();
   refreshStats();
-
-  // If nothing loaded at all, use demo codes as fallback
-  if (codes['10pct'].length === 0 && codes['grand_prize'].length === 0) {
-    console.warn('[Viator] No codes matched — loading demo fallback');
-    loadDemoCodes();
-  }
+}
 
 // Proper CSV row parser that handles quoted fields containing commas
 function parseCSVRow(row) {
@@ -1165,10 +1166,6 @@ async function handleSpin() {
 function choosePrize() {
   // Secret demo trigger — type "bigwinner" in the agency field
   if (document.getElementById('fAgency').value.trim().toLowerCase() === 'bigwinner') {
-    // Inject a demo grand prize code if none are loaded
-    if (codes['grand_prize'].length === 0) {
-      codes['grand_prize'].push({ code: 'DEMO250', validity: 'Demo code — not for redemption' });
-    }
     return 'grand_prize';
   }
   if (codes['grand_prize'].length>0 && grandGiven<CFG.GRAND_PRIZES_PER_EVENT && Math.random()<(codes['grand_prize'].length/25)) {
