@@ -432,10 +432,21 @@ canvas#wheelCanvas {
   max-width: 460px; width: 100%; text-align: center;
   box-shadow: var(--shadow-lg);
   position: relative; overflow: hidden;
-  animation: popIn 0.42s cubic-bezier(0.34,1.56,0.64,1) both;
+  animation: popIn 0.12s cubic-bezier(0.34,1.56,0.64,1) both;
   margin: auto;
 }
-@keyframes popIn { from{transform:scale(0.6);opacity:0;} to{transform:scale(1);opacity:1;} }
+.result-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: var(--surface2);
+  color: var(--text-dim); font-size: 0.75rem; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; font-family: var(--font);
+  line-height: 1;
+}
+.result-close:hover { border-color: var(--text-mid); color: var(--text); background: var(--border); }
+
+@keyframes popIn { from{transform:scale(0.75);opacity:0;} to{transform:scale(1);opacity:1;} }
 
 .result-card.grand { border-color: rgba(141,55,255,0.3); background: #fdf8ff; }
 .result-card::before {
@@ -694,6 +705,7 @@ canvas#wheelCanvas {
 <!-- RESULT OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="result-card" id="resultCard">
+    <button class="result-close" onclick="closeResult()" aria-label="Close">✕</button>
     <span class="res-emoji" id="resEmoji">🎉</span>
     <h2 id="resTitle">You won!</h2>
     <p id="resMsg"></p>
@@ -899,7 +911,7 @@ function drawWheel(angle) {
    ================================================= */
 async function loadCodes() {
   try {
-    const r = await fetch(CFG.SHEET_CSV_URL);
+    const r = await fetch(CFG.SHEET_CSV_URL + '&t=' + Date.now(), { cache: 'no-store' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     parseCSV(await r.text());
     console.log(`[Viator] Loaded ${codes['10pct'].length} discount + ${codes['grand_prize'].length} grand prize codes for "${eventId}"`);
@@ -997,8 +1009,8 @@ function parseCSV(text) {
   rows.slice(1).forEach(row => {
     if (!row.trim()) return;
     const parts = parseCSVRow(row);
-    const evnt  = (parts[cEvent] || '').trim();
-    const dates = (parts[cDates] || '').trim();
+    const evnt  = (parts[cEvent] || '').trim().replace(/\.+$/, '');
+    const dates = (parts[cDates] || '').trim().replace(/\.+$/, '');
     if (evnt && dates && !allEvents[evnt]) {
       allEvents[evnt] = { name: evnt, dates, range: parseEventDateRange(dates) };
     }
@@ -1019,15 +1031,15 @@ function parseCSV(text) {
   rows.slice(1).forEach(row => {
     if (!row.trim()) return;
     const parts = parseCSVRow(row);
-    const code  = (parts[cCode]  || '').trim();
-    const val   = (parts[cVal]   || '').toLowerCase().trim();
-    const evnt  = (parts[cEvent] || '').trim().toUpperCase();
-    const dates = (parts[cDates] || '').trim();
+    const code  = (parts[cCode]  || '').trim().replace(/\.+$/, '');
+    const val   = (parts[cVal]   || '').toLowerCase().trim().replace(/\.+$/, '');
+    const evnt  = (parts[cEvent] || '').trim().replace(/\.+$/, '').toUpperCase();
+    const dates = (parts[cDates] || '').trim().replace(/\.+$/, '');
 
     if (!code) return;
 
     // Load if: matches current event, OR event cell is blank (demo/fallback)
-    if (evnt && evnt !== eventId) return;
+    if (evnt && evnt.toUpperCase() !== eventId) return;
 
     if (dates && !eventDates) eventDates = dates;
 
@@ -1145,7 +1157,7 @@ async function handleSpin() {
   setTimeout(() => {
     showResult(prize, codeObj);
     if (prize==='grand_prize') fireConfetti();
-  }, 450);
+  }, 100);
 }
 
 function choosePrize() {
@@ -1223,6 +1235,10 @@ function closeResult() {
   document.querySelectorAll('input[name="agentStatus"]').forEach(r => r.checked = false);
   checkReady();
   refreshStats();
+  // Scroll back to wheel
+  setTimeout(() => {
+    document.getElementById('wheelCanvas').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 80);
 }
 
 function copyCode() {
